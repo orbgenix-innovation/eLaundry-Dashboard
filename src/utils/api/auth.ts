@@ -1,6 +1,6 @@
 // services/auth.ts
-import { setCookie } from "cookies-next";
-import api from "./apiClient";
+import { setCookie } from 'cookies-next';
+import api from './apiClient';
 
 interface LoginPayload {
   email: string;
@@ -19,17 +19,18 @@ interface LoginResponse {
 }
 
 export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
-  const res = await api.post<LoginResponse>("/auth/login", payload);
+  const res = await api.post<LoginResponse>(`/auth/login/`, payload);
 
   const { access, refresh } = res.data;
 
   // Save Access Token (localStorage)
-  localStorage.setItem("accessToken", access);
+  localStorage.setItem('accessToken', access);
 
   // Save Refresh Token (HttpOnly normally, but using next-safe cookie)
-  setCookie("refreshToken", refresh, {
-    maxAge: 7 * 24 * 60 * 60, // 7 days
-    sameSite: "strict",
+  setCookie('refreshToken', refresh, {
+    maxAge: 7 * 24 * 60 * 60,
+    sameSite: 'lax',
+    secure: false,
   });
 
   return res.data;
